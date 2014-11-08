@@ -276,8 +276,6 @@ module BootstrapForm
 
       options = convert_form_tag_options(method, options) if acts_like_form_tag
 
-      label = options.delete(:label)
-      label_class = hide_class if options.delete(:hide_label)
       wrapper_class = options.delete(:wrapper_class)
       wrapper_options = options.delete(:wrapper)
       help = options.delete(:help)
@@ -300,8 +298,11 @@ module BootstrapForm
       end
 
       unless options.delete(:skip_label)
+        label_class = hide_class if options.delete(:hide_label)
+        label_class ||= options.delete(:label_class)
+
         form_group_options.reverse_merge!(label: {
-          text: label,
+          text: options.delete(:label),
           class: label_class
         })
       end
