@@ -32,6 +32,11 @@ class BootstrapFormGroupTest < ActionView::TestCase
     assert_equal expected, @builder.text_field(:email, append: '.00')
   end
 
+  test "adding input-group class" do
+    expected = %{<div class="form-group"><label class="control-label required" for="user_email">Email</label><div class="input-group date"><input class="form-control" id="user_email" name="user[email]" type="text" value="steve@example.com" /><span class="input-group-addon">.00</span></div></div>}
+    assert_equal expected, @builder.text_field(:email, input_group_class: 'date', append: '.00')
+  end
+
   test "append and prepend button" do
     prefix = %{<div class="form-group"><label class="control-label required" for="user_email">Email</label><div class="input-group">}
     field = %{<input class="form-control" id="user_email" name="user[email]" type="text" value="steve@example.com" />}
