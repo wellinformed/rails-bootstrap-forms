@@ -133,6 +133,13 @@ class, which keeps your labels accessible to those using screen readers.
 ```erb
 <%= f.text_area :comment, hide_label: :true, placeholder: "Leave a comment..." %>
 ```
+
+To add custom classes to the field's label:
+
+```erb
+<%= f.text_field :email, label_class: "custom-class" %>
+```
+
 #### Required Fields
 
 A label that is associated with a required field is automatically annotated with
@@ -277,7 +284,7 @@ To display checkboxes and radios inline, pass the `inline: true` option:
 
 #### Collections
 
-BootstrapForms also provideshelpers that automatically creates the
+BootstrapForms also provides helpers that automatically creates the
 `form_group` and the `radio_button`s or `check_box`es for you:
 
 ```erb
@@ -419,7 +426,7 @@ The `label_col` and `control_col` css classes can also be changed per control:
 
 ### Custom Field Layout
 
-The `layout` can be overriden per field:
+The `layout` can be overridden per field:
 
 ```erb
 <%= bootstrap_form_for(@user, layout: :horizontal) do |f| %>
