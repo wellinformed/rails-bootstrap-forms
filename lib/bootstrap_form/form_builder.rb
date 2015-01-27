@@ -261,6 +261,7 @@ module BootstrapForm
     def required_attribute?(obj, attribute)
 
       return false unless obj and attribute
+      return obj.is_a_required_field? if obj.respond_to?('is_a_required_field?')
 
       target = (obj.class == Class) ? obj : obj.class
       target_validators = target.validators_on(attribute).map(&:class)
