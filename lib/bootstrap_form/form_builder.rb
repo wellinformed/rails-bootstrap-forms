@@ -99,6 +99,7 @@ module BootstrapForm
     alias_method_chain :time_zone_select, :bootstrap
 
     def check_box_with_bootstrap(name, options = {}, checked_value = "1", unchecked_value = "0", &block)
+      
       options = options.symbolize_keys!
       check_box_options = options.except(:label, :label_class, :help, :inline)
 
@@ -111,13 +112,16 @@ module BootstrapForm
 
       disabled_class = " disabled" if options[:disabled]
       label_class    = options[:label_class]
+      required_class = " required" if required_attribute?(object, name)
+      has_error_class = " #{error_class}" if has_error?(name)
+      
 
       if options[:inline]
         label_class = " #{label_class}" if label_class
-        label(label_name, html, class: "checkbox-inline#{disabled_class}#{label_class}")
+        label(label_name, html, class: "checkbox-inline#{disabled_class}#{label_class}#{required_class}")
       else
-        content_tag(:div, class: "checkbox#{disabled_class}") do
-          label(label_name, html, class: label_class)
+        content_tag(:div, class: "checkbox#{disabled_class}#{has_error_class}") do
+          label(label_name, html, class: "#{label_class}#{required_class}#{has_error_class}")
         end
       end
     end
