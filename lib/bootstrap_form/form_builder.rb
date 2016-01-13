@@ -99,7 +99,7 @@ module BootstrapForm
     alias_method_chain :time_zone_select, :bootstrap
 
     def check_box_with_bootstrap(name, options = {}, checked_value = "1", unchecked_value = "0", &block)
-      
+
       options = options.symbolize_keys!
       check_box_options = options.except(:label, :label_class, :help, :inline)
 
@@ -114,7 +114,7 @@ module BootstrapForm
       label_class    = options[:label_class]
       required_class = " required" if required_attribute?(object, name)
       has_error_class = " #{error_class}" if has_error?(name)
-      
+
 
       if options[:inline]
         label_class = " #{label_class}" if label_class
@@ -184,7 +184,6 @@ module BootstrapForm
       content_tag(:div, options.except(:id, :label, :help, :icon, :label_col, :control_col, :layout)) do
         label = generate_label(options[:id], name, options[:label], options[:label_col], options[:layout]) if options[:label]
         control = capture(&block).to_s
-        control.concat(generate_help(name, options[:help]).to_s)
         control.concat(generate_icon(options[:icon])) if options[:icon]
 
         if get_group_layout(options[:layout]) == :horizontal
@@ -196,7 +195,7 @@ module BootstrapForm
           control = content_tag(:div, control, class: control_class)
         end
 
-        concat(label).concat(control)
+        concat(generate_error(name)).concat(label).concat(generate_help(name, options[:help]).to_s).concat(control)
       end
     end
 
@@ -271,7 +270,7 @@ module BootstrapForm
       target = (obj.class == Class) ? obj : obj.class
       target_validators = target.validators_on(attribute).map(&:class)
       target_validators.include?(
-        ActiveRecord::Validations::PresenceValidator) || 
+        ActiveRecord::Validations::PresenceValidator) ||
       target_validators.include?(
         ActiveModel::Validations::PresenceValidator)
     end
@@ -354,6 +353,11 @@ module BootstrapForm
       help_text ||= get_help_text_by_i18n_key(name)
 
       content_tag(:span, help_text, class: 'help-block') if help_text.present?
+    end
+
+    def generate_error(name)
+      help_text = get_error_messages(name) if has_error?(name)
+      content_tag(:span, help_text, class: 'help-block has-error') if help_text.present?
     end
 
     def generate_icon(icon)
