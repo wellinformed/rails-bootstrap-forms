@@ -11,12 +11,20 @@ module BootstrapForm
         submit(name, options)
       end
 
-      def alert_message(title, options = {})
+      def alert_message(*args, &block)
+        options = args.extract_options!
         css = options[:class] || 'alert alert-danger'
 
         if object.respond_to?(:errors) && object.errors.full_messages.any?
+          title = args.first
+          html = if block_given?
+                   capture(&block)
+                 else
+                   title
+                 end
+
           content_tag :div, class: css do
-            concat content_tag :p, title
+            concat content_tag :p, html
             concat error_summary unless options[:error_summary] == false
           end
         end
