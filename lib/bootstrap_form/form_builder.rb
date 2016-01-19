@@ -4,7 +4,7 @@ module BootstrapForm
   class FormBuilder < ActionView::Helpers::FormBuilder
     include BootstrapForm::Helpers::Bootstrap
 
-    attr_reader :layout, :label_col, :control_col, :has_error, :inline_errors, :label_errors, :acts_like_form_tag
+    attr_reader :layout, :label_col, :control_col, :has_error, :inline_errors, :label_errors, :above_errors, :acts_like_form_tag
 
     FIELD_HELPERS = %w{color_field date_field datetime_field datetime_local_field
       email_field month_field number_field password_field phone_field
@@ -20,8 +20,9 @@ module BootstrapForm
       @label_col = options[:label_col] || default_label_col
       @control_col = options[:control_col] || default_control_col
       @label_errors = options[:label_errors] || false
+      @above_errors = options[:above_errors] || (!options[:label_errors] && !options[:inline_errors]) #display errors only if other options are disabled
       @inline_errors = if options[:inline_errors].nil?
-        @label_errors != true
+        @label_errors != true && @above_errors != true
       else
         options[:inline_errors] != false
       end
@@ -195,7 +196,11 @@ module BootstrapForm
           control = content_tag(:div, control, class: control_class)
         end
 
-        concat(generate_error(name)).concat(label).concat(generate_help(name, options[:help]).to_s).concat(control)
+        parts = [label, generate_help(name, options[:help]).to_s, control]
+        parts.unshift(generate_error(name)) if above_errors
+        parts.compact!
+        first = parts.shift
+        parts.reduce(concat(first)) { |a, e| a.concat(e) }
       end
     end
 
@@ -206,6 +211,7 @@ module BootstrapForm
       fields_options[:control_col] ||= options[:control_col]
       fields_options[:inline_errors] ||= options[:inline_errors]
       fields_options[:label_errors] ||= options[:label_errors]
+      fields_options[:above_errors] ||= options[:above_errors]
       fields_for_without_bootstrap(record_name, record_object, fields_options, &block)
     end
 
